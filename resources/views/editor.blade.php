@@ -39,19 +39,21 @@
 
         .editor-panel {
             flex: 0 0 30%;
-            border-right: 1px solid #e5e7eb;
         }
 
         .preview-panel {
             flex: 1;
             background: #f9fafb;
+            margin: 5px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
         }
 
         /* Toggle Controls */
         .toggle-controls {
             display: flex;
             align-items: center;
-            padding: 12px 16px;
+            padding: 2px;
             background: #ffffff;
             border-bottom: 1px solid #e5e7eb;
         }
@@ -68,11 +70,11 @@
         }
 
         .toggle-btn {
-            padding: 6px 16px;
+            padding: 2px 12px;
             border: none;
             background: transparent;
             color: #6b7280;
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 500;
             cursor: pointer;
             border-radius: 6px;
@@ -162,21 +164,6 @@
             background: #e5e7eb;
         }
 
-        /* Code Editor */
-        .code-editor {
-            flex: 1;
-            overflow: auto;
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-            font-size: 14px;
-            line-height: 1.6;
-            padding: 16px;
-            color: #d4d4d4;
-            background: #1e1e1e;
-            border: none;
-            resize: none;
-            outline: none;
-        }
-
         /* Code View (Read-only) */
         .code-view {
             flex: 1;
@@ -222,11 +209,6 @@
             .editor-body {
                 flex-direction: column;
             }
-            .editor-panel {
-                flex: 0 0 30%;
-                border-right: none;
-                border-bottom: 1px solid #e5e7eb;
-            }
         }
     </style>
 </head>
@@ -239,10 +221,10 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                     </svg>
-                    <span class="font-medium">Dashboard</span>
+                    <!-- <span class="font-medium">Dashboard</span> -->
                 </a>
                 <div class="h-6 w-px bg-gray-300"></div>
-                <h1 class="text-lg font-semibold text-gray-900">{{ $project->name }}</h1>
+                <h1 class="text-md font-semibold text-gray-900">{{ $project->name }}</h1>
             </div>
             <div class="flex items-center gap-4">
                 <div id="saveStatus" class="status-indicator">
@@ -256,13 +238,6 @@
         <div class="editor-body">
             <!-- Left Panel -->
             <div class="editor-panel">
-                <div class="toggle-controls !hidden">
-                    <div class="toggle-group">
-                        <button class="toggle-btn active" data-view="prompt">Prompt</button>
-                        <button class="toggle-btn" data-view="code">Code</button>
-                    </div>
-                </div>
-
                 <!-- Prompt View -->
                 <div class="view-area active" id="promptView">
                     <div class="prompt-area">
@@ -277,16 +252,6 @@
                             <button class="btn-secondary" id="clearPromptBtn">Clear</button>
                         </div>
                     </div>
-                </div>
-
-                <!-- Code Editor View -->
-                <div class="view-area" id="codeEditorView">
-                    <textarea
-                        id="codeEditor"
-                        class="code-editor"
-                        spellcheck="false"
-                        placeholder="Edit your HTML code here..."
-                    >{{ $project->content }}</textarea>
                 </div>
             </div>
 
@@ -318,13 +283,7 @@
     </div>
 
     <script>
-        // Auto-save configuration
-        const AUTOSAVE_DELAY = 2000; // 2 seconds
-        let autosaveTimer = null;
-        let isSaving = false;
-
         // DOM Elements
-        const codeEditor = document.getElementById('codeEditor');
         const codeView = document.getElementById('codeView');
         const previewFrame = document.getElementById('previewFrame');
         const saveStatus = document.getElementById('saveStatus');
@@ -333,25 +292,7 @@
         const promptTextarea = document.getElementById('promptTextarea');
 
         // Toggle functionality
-        const leftToggles = document.querySelectorAll('.editor-panel .toggle-btn');
         const rightToggles = document.querySelectorAll('.preview-panel .toggle-btn');
-
-        leftToggles.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const view = btn.dataset.view;
-                leftToggles.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-
-                document.getElementById('promptView').classList.remove('active');
-                document.getElementById('codeEditorView').classList.remove('active');
-
-                if (view === 'prompt') {
-                    document.getElementById('promptView').classList.add('active');
-                } else {
-                    document.getElementById('codeEditorView').classList.add('active');
-                }
-            });
-        });
 
         rightToggles.forEach(btn => {
             btn.addEventListener('click', () => {
@@ -366,82 +307,8 @@
                     document.getElementById('previewView').classList.add('active');
                 } else {
                     document.getElementById('codeViewArea').classList.add('active');
-                    // Sync code view with current editor content
-                    codeView.textContent = codeEditor.value;
                 }
             });
-        });
-
-        // Update save status UI
-        function updateSaveStatus(status) {
-            if (status === 'saving') {
-                statusDot.classList.add('saving');
-                saveStatusText.textContent = 'Saving...';
-            } else if (status === 'saved') {
-                statusDot.classList.remove('saving');
-                saveStatusText.textContent = 'Saved';
-            } else if (status === 'error') {
-                statusDot.classList.remove('saving');
-                saveStatusText.textContent = 'Error saving';
-            }
-        }
-
-        // Save content to server
-        async function saveContent(content) {
-            if (isSaving) return;
-
-            isSaving = true;
-            updateSaveStatus('saving');
-
-            try {
-                const response = await fetch('{{ route("locale.editor.autosave", ["locale" => app()->getLocale(), "projectId" => $project->id]) }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Accept': 'application/json',
-                    },
-                    body: JSON.stringify({ content })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    updateSaveStatus('saved');
-                    // Refresh preview iframe
-                    previewFrame.src = previewFrame.src;
-                    // Update code view
-                    codeView.textContent = content;
-                } else {
-                    updateSaveStatus('error');
-                    console.error('Save failed:', data);
-                }
-            } catch (error) {
-                updateSaveStatus('error');
-                console.error('Save error:', error);
-            } finally {
-                isSaving = false;
-            }
-        }
-
-        // Debounced auto-save
-        function scheduleAutosave() {
-            clearTimeout(autosaveTimer);
-            autosaveTimer = setTimeout(() => {
-                saveContent(codeEditor.value);
-            }, AUTOSAVE_DELAY);
-        }
-
-        // Listen for code changes
-        codeEditor.addEventListener('input', scheduleAutosave);
-
-        // Save on Ctrl/Cmd + S
-        codeEditor.addEventListener('keydown', (e) => {
-            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-                e.preventDefault();
-                clearTimeout(autosaveTimer);
-                saveContent(codeEditor.value);
-            }
         });
 
         // Prompt actions
@@ -457,15 +324,7 @@
             }
 
             // TODO: Implement AI generation
-            alert('AI generation will be implemented in the next phase. For now, switch to Code view to edit manually.');
-        });
-
-        // Save before leaving
-        window.addEventListener('beforeunload', (e) => {
-            if (autosaveTimer) {
-                e.preventDefault();
-                saveContent(codeEditor.value);
-            }
+            alert('AI generation will be implemented in the next phase.');
         });
     </script>
 </body>
