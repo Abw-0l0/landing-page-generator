@@ -23,4 +23,12 @@ return [
     // JavaScript Alerts
     'please_enter_prompt_first' => 'Please enter a prompt first',
     'ai_generation_coming_soon' => 'AI generation will be implemented in the next phase.',
+
+    // AI Generation
+    'generating' => 'Generating',
+    'ai_success' => 'Your template has been updated successfully!',
+    'ai_error' => 'Failed to generate. Please try again.',
+    'ai_error_network' => 'Network error. Please check your connection.',
+    'ai_error_rate_limit' => 'Too many requests. Please wait a moment.',
+    'unauthorized' => 'You are not authorized to access this project.',
 ];

@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Project;
 use App\Models\Template;
+use App\Services\ClaudeService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth;
+use Exception;
 
 class EditorController extends Controller
 {
@@ -95,5 +97,73 @@ class EditorController extends Controller
             'message' => 'Project saved successfully',
             'last_edited_at' => $project->last_edited_at->diffForHumans(),
         ]);
+    }
+
+    /**
+     * Generate AI-modified template based on user prompt.
+     */
+    public function generateWithAi(Request $request, string $locale, string $projectId): JsonResponse
+    {
+        try {
+            $project = Project::findOrFail((int) $projectId);
+
+            // Ensure user owns this project
+            if ($project->user_id !== Auth::id()) {
+                return response()->json(['error' => __('editor.unauthorized')], 403);
+            }
+
+            $validated = $request->validate([
+                'prompt' => 'required|string|max:2000',
+            ]);
+
+            // Initialize Claude service
+            $claudeService = new ClaudeService();
+
+            // Get current HTML content
+            $currentHtml = $project->content;
+
+            // Generate modified HTML using Claude
+            $modifiedHtml = $claudeService->modifyTemplate(
+                $currentHtml,
+                $validated['prompt'],
+                $locale
+            );
+
+            // Save the modified HTML to the project
+            $project->update([
+                'content' => $modifiedHtml,
+                'last_edited_at' => now(),
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => __('editor.ai_success'),
+                'content' => $modifiedHtml,
+                'last_edited_at' => $project->last_edited_at->diffForHumans(),
+            ]);
+
+        } catch (Exception $e) {
+            // Log the error for debugging
+            \Log::error('AI Generation Error', [
+                'error' => $e->getMessage(),
+                'project_id' => $projectId,
+                'user_id' => Auth::id(),
+            ]);
+
+            // Return user-friendly error message
+            $errorMessage = __('editor.ai_error');
+
+            // Check for specific error types
+            if (str_contains($e->getMessage(), 'rate')) {
+                $errorMessage = __('editor.ai_error_rate_limit');
+            } elseif (str_contains($e->getMessage(), 'network') || str_contains($e->getMessage(), 'connection')) {
+                $errorMessage = __('editor.ai_error_network');
+            }
+
+            return response()->json([
+                'success' => false,
+                'error' => $errorMessage,
+            ], 500);
+        }
     }
 }

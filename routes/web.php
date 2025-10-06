@@ -41,6 +41,7 @@ Route::prefix('{locale}')->middleware(SetLocale::class)->group(function () {
         Route::get('/editor/create/{templateId}', [EditorController::class, 'create'])->name('locale.editor.create');
         Route::get('/editor/{projectId}/preview', [EditorController::class, 'preview'])->name('locale.editor.preview')->where('projectId', '[0-9]+');
         Route::post('/editor/{projectId}/autosave', [EditorController::class, 'autosave'])->name('locale.editor.autosave')->where('projectId', '[0-9]+');
+        Route::post('/editor/{projectId}/generate-ai', [EditorController::class, 'generateWithAi'])->name('locale.editor.generateAi')->where('projectId', '[0-9]+');
         Route::get('/editor/{projectId}', [EditorController::class, 'edit'])->name('locale.editor.edit')->where('projectId', '[0-9]+');
     });
 });

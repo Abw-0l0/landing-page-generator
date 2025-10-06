@@ -397,15 +397,61 @@
             promptTextarea.value = '';
         });
 
-        document.getElementById('generateBtn').addEventListener('click', () => {
+        document.getElementById('generateBtn').addEventListener('click', async () => {
             const prompt = promptTextarea.value.trim();
             if (!prompt) {
                 alert('{{ __("editor.please_enter_prompt_first") }}');
                 return;
             }
 
-            // TODO: Implement AI generation
-            alert('{{ __("editor.ai_generation_coming_soon") }}');
+            // Disable button and show loading state
+            const generateBtn = document.getElementById('generateBtn');
+            const originalText = generateBtn.textContent;
+            generateBtn.disabled = true;
+            generateBtn.textContent = '{{ __("editor.generating") }}...';
+            updateSaveStatus('saving');
+
+            try {
+                const response = await fetch('{{ route("locale.editor.generateAi", ["locale" => app()->getLocale(), "projectId" => $project->id]) }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({ prompt })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Update code editor with new content
+                    codeEditor.value = data.content;
+
+                    // Refresh preview iframe
+                    previewFrame.src = previewFrame.src;
+
+                    // Update save status
+                    updateSaveStatus('saved');
+
+                    // Show success message
+                    alert(data.message || '{{ __("editor.ai_success") }}');
+
+                    // Clear prompt after successful generation
+                    promptTextarea.value = '';
+                } else {
+                    updateSaveStatus('error');
+                    alert(data.error || '{{ __("editor.ai_error") }}');
+                }
+            } catch (error) {
+                updateSaveStatus('error');
+                console.error('AI Generation error:', error);
+                alert('{{ __("editor.ai_error") }}');
+            } finally {
+                // Re-enable button
+                generateBtn.disabled = false;
+                generateBtn.textContent = originalText;
+            }
         });
 
         // Save before leaving

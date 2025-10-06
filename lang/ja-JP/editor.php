@@ -23,4 +23,12 @@ return [
     // JavaScript Alerts
     'please_enter_prompt_first' => '最初にプロンプトを入力してください',
     'ai_generation_coming_soon' => 'AI生成機能は次のフェーズで実装されます。',
+
+    // AI Generation
+    'generating' => '生成中',
+    'ai_success' => 'テンプレートが正常に更新されました！',
+    'ai_error' => '生成に失敗しました。もう一度お試しください。',
+    'ai_error_network' => 'ネットワークエラー。接続を確認してください。',
+    'ai_error_rate_limit' => 'リクエストが多すぎます。しばらくお待ちください。',
+    'unauthorized' => 'このプロジェクトにアクセスする権限がありません。',
 ];
