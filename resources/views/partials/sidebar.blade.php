@@ -1,4 +1,4 @@
-<aside class="sidebar w-64 flex flex-col">
+<aside class="sidebar w-64 flex flex-col pt-10">
     <!-- New Project Button -->
     <div class="p-4 hidden">
         <button class="new-project-btn w-full py-3 px-4 rounded-lg text-white font-semibold flex items-center justify-center gap-2 hover:shadow-lg transition-all">

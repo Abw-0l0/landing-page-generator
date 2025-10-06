@@ -1,21 +1,21 @@
 <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
-    <div class="px-6 py-4">
+    <div class="px-2 sm:px-4 md:px-6">
         <div class="flex items-center justify-between">
             <!-- Logo -->
             <a href="/en-US" class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-lg bg-[#007CBE] flex items-center justify-center">
+                <div class="w-8 h-8 rounded-lg bg-[#007CBE] flex items-center justify-center">
                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                     </svg>
                 </div>
-                <h1 class="text-2xl font-bold text-gray-900">{{ __('app_name') }}</h1>
+                <h1 class="text-xl font-sans font-semibold text-gray-900">{{ __('app_name') }}</h1>
             </a>
 
             <!-- Right Side: Language + User -->
             <div class="flex items-center gap-4">
                 <!-- Language Switcher -->
                 <div class="relative">
-                    <button id="headerLanguageButton" class="flex items-center gap-2 px-3 py-2 rounded-lg bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-[#007CBE] transition-all">
+                    <button id="headerLanguageButton" class="flex items-center gap-2 px-3 py-1 rounded-lg bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-[#007CBE] transition-all">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
                         </svg>
@@ -36,7 +36,7 @@
 
                 <!-- User Dropdown -->
                 <div class="relative">
-                    <button id="headerUserButton" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 transition-all">
+                    <button id="headerUserButton" class="flex items-center gap-3 px-1 py-2 rounded-lg hover:bg-gray-50 transition-all">
                         <div class="w-10 h-10 rounded-full bg-[#007CBE] flex items-center justify-center text-white font-semibold">
                             {{ strtoupper(substr(Auth::user()->name ?? Auth::user()->email, 0, 1)) }}
                         </div>

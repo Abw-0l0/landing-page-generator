@@ -17,8 +17,8 @@
 
         .editor-header {
             background: #ffffff;
-            border-bottom: 1px solid #e5e7eb;
-            padding: 12px 24px;
+            /* border-bottom: 1px solid #e5e7eb; */
+            padding: 10px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
