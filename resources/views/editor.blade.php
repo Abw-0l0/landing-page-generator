@@ -230,7 +230,7 @@
             <div class="flex items-center gap-4">
                 <div id="saveStatus" class="status-indicator">
                     <span class="status-dot"></span>
-                    <span id="saveStatusText">Saved</span>
+                    <span id="saveStatusText">{{ __('editor.saved') }}</span>
                 </div>
             </div>
         </div>
@@ -242,15 +242,15 @@
                 <!-- Prompt View -->
                 <div class="view-area active" id="promptView">
                     <div class="prompt-area">
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Ask AI to modify your website</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">{{ __('editor.ask_ai_to_modify') }}</label>
                         <textarea
                             id="promptTextarea"
                             class="prompt-textarea"
-                            placeholder="e.g., Change the header background to blue, add a testimonials section, make the font larger..."
+                            placeholder="{{ __('editor.prompt_placeholder') }}"
                         ></textarea>
                         <div class="prompt-actions">
-                            <button class="btn-primary" id="generateBtn">Generate</button>
-                            <button class="btn-secondary" id="clearPromptBtn">Clear</button>
+                            <button class="btn-primary" id="generateBtn">{{ __('editor.generate') }}</button>
+                            <button class="btn-secondary" id="clearPromptBtn">{{ __('editor.clear') }}</button>
                         </div>
                     </div>
                 </div>
@@ -260,8 +260,8 @@
             <div class="preview-panel">
                 <div class="toggle-controls">
                     <div class="toggle-group">
-                        <button class="toggle-btn active" data-view="preview">Preview</button>
-                        <button class="toggle-btn" data-view="codeview">Code</button>
+                        <button class="toggle-btn active" data-view="preview">{{ __('editor.preview') }}</button>
+                        <button class="toggle-btn" data-view="codeview">{{ __('editor.code') }}</button>
                     </div>
                 </div>
 
@@ -281,7 +281,7 @@
                         id="codeEditor"
                         class="code-editor"
                         spellcheck="false"
-                        placeholder="Edit your HTML code here..."
+                        placeholder="{{ __('editor.edit_html_placeholder') }}"
                     >{{ $project->content }}</textarea>
                 </div>
             </div>
@@ -326,13 +326,13 @@
         function updateSaveStatus(status) {
             if (status === 'saving') {
                 statusDot.classList.add('saving');
-                saveStatusText.textContent = 'Saving...';
+                saveStatusText.textContent = '{{ __('editor.saving') }}';
             } else if (status === 'saved') {
                 statusDot.classList.remove('saving');
-                saveStatusText.textContent = 'Saved';
+                saveStatusText.textContent = '{{ __('editor.saved') }}';
             } else if (status === 'error') {
                 statusDot.classList.remove('saving');
-                saveStatusText.textContent = 'Error saving';
+                saveStatusText.textContent = '{{ __('editor.error_saving') }}';
             }
         }
 
@@ -400,12 +400,12 @@
         document.getElementById('generateBtn').addEventListener('click', () => {
             const prompt = promptTextarea.value.trim();
             if (!prompt) {
-                alert('Please enter a prompt first');
+                alert('{{ __("editor.please_enter_prompt_first") }}');
                 return;
             }
 
             // TODO: Implement AI generation
-            alert('AI generation will be implemented in the next phase.');
+            alert('{{ __("editor.ai_generation_coming_soon") }}');
         });
 
         // Save before leaving
