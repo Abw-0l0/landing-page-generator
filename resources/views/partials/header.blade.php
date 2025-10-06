@@ -48,7 +48,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                         </svg>
                     </button>
-                    <div id="headerUserDropdown" class="hidden absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-xl overflow-hidden">
+                    <div id="headerUserDropdown" class="hidden absolute right-0 mt-0 w-56 bg-white border border-gray-200 rounded-lg shadow-xl overflow-hidden">
                         <!-- User Info (mobile) -->
                         <div class="px-4 py-3 border-b border-gray-200 md:hidden">
                             <p class="text-sm font-medium text-gray-900">{{ Auth::user()->name ?? 'User' }}</p>

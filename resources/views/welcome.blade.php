@@ -23,7 +23,7 @@
                 <nav class="flex items-center gap-4">
                     <!-- Language Switcher -->
                     <div class="relative">
-                        <button id="languageButton" class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-[#007CBE] rounded-lg transition-colors">
+                        <button id="languageButton" class="flex items-center gap-2 px-3 py-1 rounded-lg bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-[#007CBE] transition-all">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
                             </svg>
@@ -32,12 +32,12 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                             </svg>
                         </button>
-                        <div id="languageDropdown" class="hidden absolute right-0 mt-2 w-40 rounded-lg shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+                        <div id="languageDropdown" class="hidden absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-xl overflow-hidden">
                             <div class="py-1">
-                                <a href="{{ route('locale.welcome', ['locale' => 'en-US']) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <a href="{{ route('locale.welcome', ['locale' => 'en-US']) }}" class="block px-4 py-2 text-gray-700 hover:bg-[#007CBE] hover:text-white transition-colors">
                                     English
                                 </a>
-                                <a href="{{ route('locale.welcome', ['locale' => 'ja-JP']) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <a href="{{ route('locale.welcome', ['locale' => 'ja-JP']) }}" class="block px-4 py-2 text-gray-700 hover:bg-[#007CBE] hover:text-white transition-colors">
                                     日本語
                                 </a>
                             </div>
