@@ -106,7 +106,7 @@
         /* Prompt Area */
         .prompt-area {
             margin-top: auto;
-            padding: 20px;
+            padding: 10px;
             background: #ffffff;
         }
 
@@ -114,7 +114,7 @@
             width: 100%;
             min-height: 100px;
             padding: 16px;
-            border: 2px solid #e5e7eb;
+            border: 1px solid #e5e7eb;
             border-radius: 8px;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             font-size: 15px;
@@ -129,13 +129,13 @@
         }
 
         .prompt-actions {
-            margin-top: 16px;
+            margin-top: 8px;
             display: flex;
             gap: 12px;
         }
 
         .btn-primary {
-            padding: 10px 20px;
+            padding: 8px 20px;
             background: #007CBE;
             color: white;
             border: none;
@@ -150,7 +150,7 @@
         }
 
         .btn-secondary {
-            padding: 10px 20px;
+            padding: 8px 20px;
             background: #f3f4f6;
             color: #374151;
             border: none;
@@ -164,8 +164,8 @@
             background: #e5e7eb;
         }
 
-        /* Code View (Read-only) */
-        .code-view {
+        /* Code Editor */
+        .code-editor {
             flex: 1;
             overflow: auto;
             font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
@@ -174,8 +174,9 @@
             padding: 16px;
             color: #d4d4d4;
             background: #1e1e1e;
-            white-space: pre;
-            margin: 0;
+            border: none;
+            resize: none;
+            outline: none;
         }
 
         /* Preview Iframe */
@@ -274,17 +275,27 @@
                     ></iframe>
                 </div>
 
-                <!-- Code View -->
+                <!-- Code Editor View -->
                 <div class="view-area" id="codeViewArea">
-                    <pre id="codeView" class="code-view">{{ $project->content }}</pre>
+                    <textarea
+                        id="codeEditor"
+                        class="code-editor"
+                        spellcheck="false"
+                        placeholder="Edit your HTML code here..."
+                    >{{ $project->content }}</textarea>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
+        // Auto-save configuration
+        const AUTOSAVE_DELAY = 2000; // 2 seconds
+        let autosaveTimer = null;
+        let isSaving = false;
+
         // DOM Elements
-        const codeView = document.getElementById('codeView');
+        const codeEditor = document.getElementById('codeEditor');
         const previewFrame = document.getElementById('previewFrame');
         const saveStatus = document.getElementById('saveStatus');
         const saveStatusText = document.getElementById('saveStatusText');
@@ -311,6 +322,76 @@
             });
         });
 
+        // Update save status UI
+        function updateSaveStatus(status) {
+            if (status === 'saving') {
+                statusDot.classList.add('saving');
+                saveStatusText.textContent = 'Saving...';
+            } else if (status === 'saved') {
+                statusDot.classList.remove('saving');
+                saveStatusText.textContent = 'Saved';
+            } else if (status === 'error') {
+                statusDot.classList.remove('saving');
+                saveStatusText.textContent = 'Error saving';
+            }
+        }
+
+        // Save content to server
+        async function saveContent(content) {
+            if (isSaving) return;
+
+            isSaving = true;
+            updateSaveStatus('saving');
+
+            try {
+                const response = await fetch('{{ route("locale.editor.autosave", ["locale" => app()->getLocale(), "projectId" => $project->id]) }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({ content })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    updateSaveStatus('saved');
+                    // Refresh preview iframe
+                    previewFrame.src = previewFrame.src;
+                } else {
+                    updateSaveStatus('error');
+                    console.error('Save failed:', data);
+                }
+            } catch (error) {
+                updateSaveStatus('error');
+                console.error('Save error:', error);
+            } finally {
+                isSaving = false;
+            }
+        }
+
+        // Debounced auto-save
+        function scheduleAutosave() {
+            clearTimeout(autosaveTimer);
+            autosaveTimer = setTimeout(() => {
+                saveContent(codeEditor.value);
+            }, AUTOSAVE_DELAY);
+        }
+
+        // Listen for code changes
+        codeEditor.addEventListener('input', scheduleAutosave);
+
+        // Save on Ctrl/Cmd + S
+        codeEditor.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                clearTimeout(autosaveTimer);
+                saveContent(codeEditor.value);
+            }
+        });
+
         // Prompt actions
         document.getElementById('clearPromptBtn').addEventListener('click', () => {
             promptTextarea.value = '';
@@ -325,6 +406,14 @@
 
             // TODO: Implement AI generation
             alert('AI generation will be implemented in the next phase.');
+        });
+
+        // Save before leaving
+        window.addEventListener('beforeunload', (e) => {
+            if (autosaveTimer) {
+                e.preventDefault();
+                saveContent(codeEditor.value);
+            }
         });
     </script>
 </body>
