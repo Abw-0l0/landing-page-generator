@@ -271,7 +271,7 @@
                     <h2 class="text-4xl font-bold mb-6">Reserve Your Table</h2>
                     <p class="text-xl text-gray-300 mb-8">Experience authentic Italian dining. Book your table today.</p>
 
-                    <form action="{{ route('reservations.store') }}" method="POST" class="space-y-6">
+                    <form action="#" method="POST" class="space-y-6">
                         @csrf
                         <div class="grid md:grid-cols-2 gap-6">
                             <div>

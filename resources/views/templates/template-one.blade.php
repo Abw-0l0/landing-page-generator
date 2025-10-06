@@ -165,7 +165,7 @@
             <div class="grid md:grid-cols-2 gap-12">
                 {{-- Contact Form --}}
                 <div class="bg-white p-8 rounded-xl shadow-lg">
-                    <form action="{{ route('appointments.store') }}" method="POST">
+                    <form action="#" method="POST">
                         @csrf
                         <div class="mb-6">
                             <label class="block text-gray-700 font-semibold mb-2">Full Name</label>

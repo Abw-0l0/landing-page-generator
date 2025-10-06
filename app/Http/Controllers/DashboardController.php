@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Template;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -14,6 +15,8 @@ class DashboardController extends Controller
      */
     public function index(): View
     {
-        return view('dashboard');
+        $templates = Template::orderBy('views', 'desc')->get();
+
+        return view('dashboard', compact('templates'));
     }
 }

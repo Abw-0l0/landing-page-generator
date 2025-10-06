@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\SetLocale;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EditorController;
 
 // Root route - show welcome page (always en-US)
 Route::get('/', function () {
@@ -34,6 +35,14 @@ Route::prefix('{locale}')->middleware(SetLocale::class)->group(function () {
 
     // Dashboard route (protected)
     Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth')->name('locale.dashboard');
+
+    // Editor routes (protected)
+    Route::middleware('auth')->group(function () {
+        Route::get('/editor/create/{templateId}', [EditorController::class, 'create'])->name('locale.editor.create');
+        Route::get('/editor/{projectId}/preview', [EditorController::class, 'preview'])->name('locale.editor.preview')->where('projectId', '[0-9]+');
+        Route::post('/editor/{projectId}/autosave', [EditorController::class, 'autosave'])->name('locale.editor.autosave')->where('projectId', '[0-9]+');
+        Route::get('/editor/{projectId}', [EditorController::class, 'edit'])->name('locale.editor.edit')->where('projectId', '[0-9]+');
+    });
 });
 
 // Global logout route

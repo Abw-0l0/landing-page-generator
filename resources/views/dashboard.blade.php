@@ -55,101 +55,44 @@
 
         <!-- Template Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Template Card 1 -->
-            <div class="template-card rounded-xl overflow-hidden cursor-pointer">
-                <div class="aspect-video bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                    <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                    </svg>
-                </div>
-                <div class="p-4">
-                    <h3 class="text-gray-900 font-semibold mb-1">{{ __('dashboard.template_effortless') }}</h3>
-                    <p class="text-gray-600 text-sm mb-2">{{ __('dashboard.template_effortless_desc') }}</p>
-                    <div class="flex items-center gap-2 text-xs text-gray-500">
-                        <span>👁 398</span>
-                    </div>
-                </div>
-            </div>
+            @php
+            $gradients = [
+                'medical' => 'from-blue-100 to-blue-200',
+                'saas' => 'from-purple-100 to-purple-200',
+                'restaurant' => 'from-amber-100 to-amber-200',
+            ];
+            $iconColors = [
+                'medical' => 'text-blue-600',
+                'saas' => 'text-purple-600',
+                'restaurant' => 'text-amber-600',
+            ];
+            @endphp
 
-            <!-- Template Card 2 -->
-            <div class="template-card rounded-xl overflow-hidden cursor-pointer">
-                <div class="aspect-video bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center">
-                    <svg class="w-16 h-16 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-                    </svg>
+            @foreach($templates as $template)
+            <a href="{{ route('locale.editor.create', ['locale' => app()->getLocale(), 'templateId' => $template->id]) }}" class="template-card rounded-xl overflow-hidden cursor-pointer block">
+                <div class="aspect-video bg-gradient-to-br {{ $gradients[$template->category] ?? 'from-gray-100 to-gray-200' }} flex items-center justify-center">
+                    @if($template->category === 'medical')
+                        <i class="fas fa-heartbeat text-6xl {{ $iconColors[$template->category] }}"></i>
+                    @elseif($template->category === 'saas')
+                        <i class="fas fa-cloud text-6xl {{ $iconColors[$template->category] }}"></i>
+                    @elseif($template->category === 'restaurant')
+                        <i class="fas fa-utensils text-6xl {{ $iconColors[$template->category] }}"></i>
+                    @else
+                        <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                    @endif
                 </div>
                 <div class="p-4">
-                    <h3 class="text-gray-900 font-semibold mb-1">{{ __('dashboard.template_3d') }}</h3>
-                    <p class="text-gray-600 text-sm mb-2">{{ __('dashboard.template_3d_desc') }}</p>
+                    <h3 class="text-gray-900 font-semibold mb-1">{{ $template->name }}</h3>
+                    <p class="text-gray-600 text-sm mb-2 line-clamp-2">{{ $template->description }}</p>
                     <div class="flex items-center gap-2 text-xs text-gray-500">
-                        <span>👁 120</span>
+                        <span>👁 {{ number_format($template->views) }}</span>
+                        <span class="px-2 py-1 bg-gray-100 rounded">{{ ucfirst($template->category) }}</span>
                     </div>
                 </div>
-            </div>
-
-            <!-- Template Card 3 -->
-            <div class="template-card rounded-xl overflow-hidden cursor-pointer">
-                <div class="aspect-video bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
-                    <svg class="w-16 h-16 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                    </svg>
-                </div>
-                <div class="p-4">
-                    <h3 class="text-gray-900 font-semibold mb-1">{{ __('dashboard.template_ai_agents') }}</h3>
-                    <p class="text-gray-600 text-sm mb-2">{{ __('dashboard.template_ai_agents_desc') }}</p>
-                    <div class="flex items-center gap-2 text-xs text-gray-500">
-                        <span>👁 817</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Template Card 4 -->
-            <div class="template-card rounded-xl overflow-hidden cursor-pointer">
-                <div class="aspect-video bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
-                    <svg class="w-16 h-16 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                </div>
-                <div class="p-4">
-                    <h3 class="text-gray-900 font-semibold mb-1">Medical Clinic Landing</h3>
-                    <p class="text-gray-600 text-sm mb-2">1,543 views</p>
-                    <div class="flex items-center gap-2 text-xs text-gray-500">
-                        <span>👁 543</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Template Card 5 -->
-            <div class="template-card rounded-xl overflow-hidden cursor-pointer">
-                <div class="aspect-video bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center">
-                    <svg class="w-16 h-16 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                    </svg>
-                </div>
-                <div class="p-4">
-                    <h3 class="text-gray-900 font-semibold mb-1">Dental Practice Template</h3>
-                    <p class="text-gray-600 text-sm mb-2">892 views</p>
-                    <div class="flex items-center gap-2 text-xs text-gray-500">
-                        <span>👁 892</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Template Card 6 -->
-            <div class="template-card rounded-xl overflow-hidden cursor-pointer">
-                <div class="aspect-video bg-gradient-to-br from-pink-100 to-pink-200 flex items-center justify-center">
-                    <svg class="w-16 h-16 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                    </svg>
-                </div>
-                <div class="p-4">
-                    <h3 class="text-gray-900 font-semibold mb-1">Healthcare Provider</h3>
-                    <p class="text-gray-600 text-sm mb-2">1,234 views</p>
-                    <div class="flex items-center gap-2 text-xs text-gray-500">
-                        <span>👁 1234</span>
-                    </div>
-                </div>
-            </div>
+            </a>
+            @endforeach
         </div>
     </div>
 </div>
